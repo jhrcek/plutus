@@ -1,6 +1,6 @@
 'use strict';
 
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
@@ -87,6 +87,10 @@ module.exports = {
             {
                 test: /\.(gif|png|jpe?g|svg)$/i,
                 use: 'url-loader'
+            },
+            {
+                test: /\.ttf$/,
+                use: ['file-loader'],
             }
         ]
     },
@@ -119,6 +123,7 @@ module.exports = {
             productName: 'marlowe-playground',
             googleAnalyticsId: isWebpackDevServer ? 'UA-XXXXXXXXX-X' : 'UA-119953429-7'
         }),
-        new webpack.NormalModuleReplacementPlugin(/^echarts$/, 'echarts/dist/echarts.min.js')
+        new webpack.NormalModuleReplacementPlugin(/^echarts$/, 'echarts/dist/echarts.min.js'),
+        new MonacoWebpackPlugin()
     ].concat(plugins)
 };

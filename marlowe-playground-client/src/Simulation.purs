@@ -89,6 +89,7 @@ simulationPane state =
           , br_
           , errorList
           , analysisPane state
+          , div [id_ "monacoPane"] []
           ]
         ]
     )
