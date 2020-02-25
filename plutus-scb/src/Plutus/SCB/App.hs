@@ -7,6 +7,7 @@
 
 module Plutus.SCB.App where
 
+import           Cardano.Node.API           (MockNodeAPI, blocksSince)
 import qualified Cardano.Node.Client        as NodeClient
 import qualified Cardano.Node.Server        as NodeServer
 import qualified Cardano.Wallet.Client      as WalletClient
@@ -61,6 +62,9 @@ newtype App a =
                      , MonadReader Env
                      , MonadError SCBError
                      )
+
+instance MockNodeAPI App where
+    blocksSince = runNodeClientM . NodeClient.blocksSince
 
 instance NodeAPI App where
     submitTxn = void . runNodeClientM . NodeClient.addTx

@@ -3,11 +3,10 @@
 
 module Cardano.Node.API
     ( API
+    , MockNodeAPI(..)
     ) where
 
-import           Data.Map              (Map)
-
-import           Ledger                (Address, Blockchain, Slot, Tx, TxOut, TxOutRef)
+import           Ledger                (Block, Slot, Tx)
 import           Servant.API           ((:<|>), (:>), Get, JSON, NoContent, Post, ReqBody)
 import           Wallet.Emulator.Chain (ChainEvent)
 
@@ -20,6 +19,10 @@ type API
 -- Routes that are not guaranteed to exist on the real node
 type MockAPI
      = "random-tx" :> Get '[ JSON] Tx
-       :<|> "utxo-at" :> ReqBody '[ JSON] Address :> Post '[ JSON] (Map TxOutRef TxOut)
-       :<|> "blockchain" :> Get '[ JSON] Blockchain
+       :<|> "blocks-since" :> ReqBody '[ JSON] Slot :> Get '[ JSON] [Block]
        :<|> "consume-event-history" :> Post '[ JSON] [ChainEvent]
+
+class Monad m =>
+      MockNodeAPI m
+    where
+    blocksSince :: Slot -> m [Block]

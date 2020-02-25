@@ -32,8 +32,7 @@ app stateVar =
         (Proxy @API)
         (runStdoutLoggingT . processChainEffects stateVar)
         (healthcheck :<|> addTx :<|> getCurrentSlot :<|>
-         (genRandomTx :<|> utxoAt :<|> blockchain :<|>
-          consumeEventHistory stateVar))
+         (genRandomTx :<|> getBlocksSince :<|> consumeEventHistory stateVar))
 
 main :: (MonadIO m, MonadLogger m) => MockServerConfig -> m ()
 main MockServerConfig { mscBaseUrl

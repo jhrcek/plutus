@@ -9,14 +9,14 @@ import           Control.Lens
 import qualified Data.ByteString.Lazy   as BSL
 import           Data.Function          ((&))
 import           Data.Proxy             (Proxy (Proxy))
-import           Ledger                 (Address, PubKey, Signature, Value, pubKeyAddress)
+import           Ledger                 (Address, PubKey, Signature, TxOutRef, Value, pubKeyAddress)
 import           Ledger.AddressMap      (AddressMap, UtxoMap, fundsAt)
 import           Servant                (NoContent)
 import           Servant.Client         (ClientM, client)
 import           Servant.Extra          (left, right)
 import           Wallet.Emulator.Wallet (Wallet)
 
-selectCoins :: WalletId -> Value -> ClientM ([Value], Value)
+selectCoins :: WalletId -> Value -> ClientM ([(TxOutRef, Value)], Value)
 allocateAddress :: WalletId -> ClientM PubKey
 getWatchedAddresses :: ClientM AddressMap
 getWallets :: ClientM [Wallet]

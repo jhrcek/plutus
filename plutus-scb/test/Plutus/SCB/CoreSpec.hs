@@ -1,22 +1,25 @@
+{-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Plutus.SCB.CoreSpec
     ( tests
     ) where
 
+import qualified Cardano.Wallet.Mock                           as WalletServer
 import           Control.Monad                                 (void)
-import           Control.Monad.IO.Class                        (liftIO)
+import           Control.Monad.IO.Class                        (MonadIO, liftIO)
 import           Data.Aeson                                    as JSON
 import qualified Data.Set                                      as Set
-import           Eventful                                      (globalStreamProjection, streamProjectionState)
+import           Eventful                                      (UUID, globalStreamProjection, streamProjectionState)
 import qualified Language.PlutusTx.Coordination.Contracts.Game as Contracts.Game
 import           Ledger.Ada                                    (lovelaceValueOf)
 import           Plutus.SCB.Command                            ()
 import           Plutus.SCB.Core
-import           Plutus.SCB.TestApp                            (runScenario)
+import           Plutus.SCB.Events                             (ChainEvent)
+import           Plutus.SCB.TestApp                            (TestApp, runScenario)
 import           Test.QuickCheck.Instances.UUID                ()
 import           Test.Tasty                                    (TestTree, testGroup)
-import           Test.Tasty.HUnit                              (assertEqual, testCase)
+import           Test.Tasty.HUnit                              (HasCallStack, assertEqual, testCase)
 
 tests :: TestTree
 tests = testGroup "SCB.Core" [installContractTests, executionTests]
@@ -60,21 +63,47 @@ executionTests :: TestTree
 executionTests =
     testGroup
         "Executing contracts."
-        [ testCase "Locked Game" $
+        [ testCase "Guessing Game" $
           runScenario $ do
               installContract "game"
               uuid <- activateContract "game"
-              updateContract
+              assertTxCount
+                  "Activating the game does not generate transactions."
+                  0
+              lock
                   uuid
-                  "lock"
-                  (toJSON
-                       (Contracts.Game.LockParams
-                            { Contracts.Game.amount = lovelaceValueOf 15
-                            , Contracts.Game.secretWord = "password"
-                            }))
-              txs <-
-                  streamProjectionState <$>
-                  refreshProjection (globalStreamProjection txHistoryProjection)
-              liftIO $
-                  assertEqual "Contains one balanced transaction" 1 $ length txs
+                  Contracts.Game.LockParams
+                      { Contracts.Game.amount = lovelaceValueOf 15
+                      , Contracts.Game.secretWord = "password"
+                      }
+              assertTxCount "Locking the game should produce one transaction" 1
+              guess
+                  uuid
+                  Contracts.Game.GuessParams
+                      {Contracts.Game.guessWord = "wrong"}
+              assertTxCount
+                  "A wrong guess does not introduce any new transactions."
+                  1
+              guess
+                  uuid
+                  Contracts.Game.GuessParams
+                      {Contracts.Game.guessWord = "password"}
+              assertTxCount "A correct guess creates a second transaction." 2
         ]
+
+assertTxCount ::
+       (HasCallStack, MonadIO m, MonadEventStore ChainEvent m)
+    => String
+    -> Int
+    -> m ()
+assertTxCount msg expected = do
+    txs <-
+        streamProjectionState <$>
+        refreshProjection (globalStreamProjection txHistoryProjection)
+    liftIO $ assertEqual msg expected $ length txs
+
+lock :: UUID -> Contracts.Game.LockParams -> TestApp ()
+lock uuid params = updateContract uuid "lock" (toJSON params)
+
+guess :: UUID -> Contracts.Game.GuessParams -> TestApp ()
+guess uuid params = updateContract uuid "guess" (toJSON params)
