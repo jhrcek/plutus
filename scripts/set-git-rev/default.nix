@@ -15,7 +15,7 @@ let
   overrideGitRev = drvOut: let
     drvOutOutputs = drvOut.outputs or ["out"];
   in
-    pkgs.runCommand (drvOut.pname + "-" + git-rev) {
+    pkgs.runCommand (drvOut.name + "-" + git-rev) {
       outputs  = drvOutOutputs;
       passthru = drvOut.drvAttrs
         // (drvOut.passthru or {})
