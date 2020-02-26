@@ -156,13 +156,11 @@ let
       extended-utxo-spec = pkgs.callPackage ./extended-utxo-spec { inherit latex; };
       lazy-machine = pkgs.callPackage ./docs/fomega/lazy-machine { inherit latex; };
 
-      public-combined-haddock = let
+      combined-haddock = let
         haddock-combine = pkgs.callPackage ./nix/haddock-combine.nix {};
-        publicPackages = localLib.getPackages {
-          inherit (self) haskellPackages; filter = localLib.isPublicPlutus;
-        };
+        toHaddock = localLib.collectComponents' "library" local-packages-new;
         in haddock-combine {
-          hspkgs = builtins.attrValues publicPackages;
+          hspkgs = builtins.attrValues toHaddock;
           prologue = pkgs.writeTextFile {
             name = "prologue";
             text = "Combined documentation for all the public Plutus libraries.";
