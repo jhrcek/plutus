@@ -79,8 +79,6 @@ let
   # script on Darwin.
   easyPS = pkgs.callPackage sources.easy-purescript-nix {};
 
-  purty = pkgs.callPackage ./purty { };
-
   packages = self: (rec {
     inherit pkgs localLib;
 
@@ -134,11 +132,11 @@ let
     tests = {
       shellcheck = pkgs.callPackage localLib.iohkNix.tests.shellcheck { inherit src; };
       stylishHaskell = pkgs.callPackage localLib.legacyIohkNix.tests.stylishHaskell {
-        stylish-haskell = self.haskell-packages-new.stylish-haskell.components.exes.stylish-haskell;
+        stylish-haskell = dev.packages.stylish-haskell;
         inherit src;
       };
       purty = pkgs.callPackage ./nix/tests/purty.nix {
-        purty = self.haskell-packages-new.purty.components.exes.purty;
+        purty = dev.packages.purty;
         inherit src;
       };
     };
@@ -371,10 +369,33 @@ let
 
     dev = rec {
       packages = {
-        cabal-install = haskell-packages-new.cabal-install.components.exes.cabal;
-        stylish-haskell = haskell-packages-new.stylish-haskell.components.exes.stylish-haskell;
-        purty = haskell-packages-new.purty.components.exes.purty;
-        hlint = haskell-packages-new.hlint.components.exes.hlint;
+        cabal-install =
+          let hspkg = pkgs.haskell-nix.hackage-package { name = "cabal-install"; version = "2.4.1.0"; };
+          in hspkg.components.exes.cabal;
+        stylish-haskell =
+          let hspkg = pkgs.haskell-nix.hackage-package { name = "stylish-haskell"; version = "0.9.2.2"; };
+          in hspkg.components.exes.stylish-haskell;
+        hlint =
+          let hspkg = pkgs.haskell-nix.hackage-package { name = "hlint"; version = "2.1.12"; };
+          in hspkg.components.exes.hlint;
+        purty =
+          let hspkgs = pkgs.haskell-nix.stackProject {
+              src = pkgs.fetchFromGitLab {
+                owner = "joneshf";
+                repo = "purty";
+                rev = "3c073e1149ecdddd01f1d371c70d5b243d743bf2";
+                sha256 = "0j8z9661anisp4griiv5dfpxarfyhcfb15yrd2k0mcbhs5nzhni0";
+              };
+              pkg-def-extras = [
+                # Workaround for https://github.com/input-output-hk/haskell.nix/issues/214
+                (hackage: {
+                  packages = {
+                    "hsc2hs" = (((hackage.hsc2hs)."0.68.4").revisions).default;
+                  };
+                })
+              ];
+            };
+          in hspkgs.purty.components.exes.purty;
       };
 
       haskellNixRoots = pkgs.haskell-nix.haskellNixRoots;
