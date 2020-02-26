@@ -313,28 +313,6 @@ let
       };
     };
 
-    plutus-contract = rec {
-
-      # justStaticExecutables results in a much smaller docker image
-      # (16MB vs 588MB)
-      static = pkgs.haskell.lib.justStaticExecutables;
-
-      pid1 =  static haskellPackages.pid1;
-      contract = static haskellPackages.plutus-contract;
-
-      docker = pkgs.dockerTools.buildImage {
-          name = "plutus-contract";
-          contents = [pid1 contract];
-          config = {
-            Entrypoint = ["/bin/pid1"];
-            Cmd = ["/bin/contract-guessing-game"];
-            ExposedPorts = {
-              "8080/tcp" = {};
-          };
-        };
-      };
-    };
-
     agdaPackages = rec {
       Agda = haskellPackages.Agda;
       # Override the agda builder code from nixpkgs to use our versions of Agda and Haskell.
