@@ -475,6 +475,7 @@ let
                               [ packages.cabal-install
                                 packages.hlint
                                 packages.stylish-haskell
+                                packages.purty
 
                                 pkgs.ghcid
                                 pkgs.git
@@ -487,7 +488,6 @@ let
 
                                 easyPS.purs
                                 easyPS.spago
-                                easyPS.purty
                               ];
         });
     };
