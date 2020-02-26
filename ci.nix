@@ -10,5 +10,6 @@ let
     };
   linux = ["x86_64-linux"];
   darwin = ["x86_64-darwin"];
-  systems = linux ++ darwin;
+  # Darwin builds are not working on Hercules right now for some reason
+  systems = linux; #++ darwin;
 in builtins.listToAttrs (builtins.map (system: { name = system; value = systemBuilds system; }) systems)
