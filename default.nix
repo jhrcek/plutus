@@ -173,13 +173,13 @@ let
     };
 
     plutus-playground = rec {
-      playground-exe = set-git-rev haskellPackages.plutus-playground-server;
+      playground-exe = set-git-rev haskell-packages-new.plutus-playground-server.components.exes.plutus-playground-server;
       server-invoker = let
         # the playground uses ghc at runtime so it needs one packaged up with the dependencies it needs in one place
-        runtimeGhc = haskellPackages.ghcWithPackages (ps: [
-          playground-exe
-          haskellPackages.plutus-playground-lib
-          haskellPackages.plutus-use-cases
+        runtimeGhc = haskell-packages-new.ghcWithPackages (ps: [
+          ps.plutus-playground-server
+          ps.plutus-playground-lib
+          ps.plutus-use-cases
         ]);
       in pkgs.runCommand "plutus-server-invoker" { buildInputs = [pkgs.makeWrapper]; } ''
         # We need to provide the ghc interpreter with the location of the ghc lib dir and the package db
