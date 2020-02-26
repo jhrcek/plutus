@@ -377,6 +377,8 @@ let
         stylish-haskell = extraHaskellPackages.stylish-haskell.components.exes.stylish-haskell;
         hlint = extraHaskellPackages.hlint.components.exes.hlint;
         purty = extraHaskellPackages.purty.components.exes.purty;
+        purs = easyPS.purs;
+        spago = easyPS.spago;
       };
 
       haskellNixRoots = pkgs.haskell-nix.haskellNixRoots;
@@ -469,27 +471,6 @@ let
           echo Done
         '';
       };
-
-      withDevTools = env: env.overrideAttrs (attrs:
-        { nativeBuildInputs = attrs.nativeBuildInputs ++
-                              [ packages.cabal-install
-                                packages.hlint
-                                packages.stylish-haskell
-                                packages.purty
-
-                                pkgs.ghcid
-                                pkgs.git
-                                pkgs.cacert
-                                pkgs.yarn
-                                pkgs.zlib
-                                pkgs.z3
-                                pkgs.sqlite-analyzer
-                                pkgs.sqlite-interactive
-
-                                easyPS.purs
-                                easyPS.spago
-                              ];
-        });
     };
   });
 
