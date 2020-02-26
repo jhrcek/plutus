@@ -59,7 +59,8 @@ let
     papers = lib.mapAttrs (_: _: linux) packageSet.papers;
     tests = lib.mapAttrs (_: _: supportedSystems) packageSet.tests;
     dev.packages = lib.mapAttrs (_: _: supportedSystems) packageSet.dev.packages;
-    dev.haskellNixRoots = lib.mapAttrsRecursive (_: _: supportedSystems) packageSet.dev.haskellNixRoots;
+    # TODO: make this work on hydra
+    #dev.haskellNixRoots = lib.mapAttrsRecursive (_: _: supportedSystems) packageSet.dev.haskellNixRoots;
     # See note on 'easyPS' in 'default.nix'
     dev.scripts = lib.mapAttrs (n: _: if n == "updateClientDeps" then linux else supportedSystems) packageSet.dev.scripts;
   };
