@@ -45,7 +45,8 @@ let
       # the tests will depend on the main package so that's okay.
       lib.mapAttrs (n: p: if p ? testdata then { testrun = supportedSystems; } else supportedSystems)
          packageSet.localPackages;
-    local-packages-new = lib.mapAttrs (_: _: supportedSystems) packageSet.local-packages-new;
+    # TODO: make this work on hydra.
+    #local-packages-new = lib.mapAttrs (_: _: supportedSystems) packageSet.local-packages-new;
     # Some of the Agda dependencies only build on linux
     metatheory = lib.mapAttrs (_: _: linux) packageSet.metatheory;
     # At least the client is broken on darwin for some yarn reason
