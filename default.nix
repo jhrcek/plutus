@@ -123,11 +123,7 @@ let
     ## FIXME: currently only an approximation of the existing infra
     haskell-packages-new = pkgs.plutusHaskellPackages;
 
-    local-packages-new = localLib.getPackages {
-      haskellPackages = haskell-packages-new; filter = localLib.isPlutus;
-      # let's pretend we don't care about components. all it is.
-      f = k: v: v;
-    };
+    local-packages-new = pkgs.haskell-nix.haskellLib.selectProjectPackages haskell-packages-new;
 
     # Extra Haskell packages which we use but aren't part of the main project
     # definition.
