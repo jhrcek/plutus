@@ -215,12 +215,12 @@ let
     };
 
     marlowe-playground = rec {
-      playground-exe = set-git-rev haskellPackages.marlowe-playground-server;
+      playground-exe = set-git-rev haskell-packages-new.marlowe-playground-server.components.exes.marlowe-playground-server;
       server-invoker = let
         # the playground uses ghc at runtime so it needs one packaged up with the dependencies it needs in one place
-        runtimeGhc = haskellPackages.ghcWithPackages (ps: [
-          haskellPackages.marlowe
-          playground-exe
+        runtimeGhc = haskell-packages-new.ghcWithPackages (ps: [
+          ps.marlowe
+          ps.marlowe-playground-server
         ]);
       in pkgs.runCommand "marlowe-server-invoker" { buildInputs = [pkgs.makeWrapper]; } ''
         # We need to provide the ghc interpreter with the location of the ghc lib dir and the package db
