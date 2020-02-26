@@ -13,7 +13,7 @@ let
     src = ../.;
     # This turns the output into a fixed-output derivation, which speeds things
     # up, but means we need to invalidate this hash when we change things.
-    stack-sha256 = "0356fsjnb5lgzn7xw2wqphy97c2yxr3bdfd55a6kd84z9p475vcx";
+    #stack-sha256 = "0356fsjnb5lgzn7xw2wqphy97c2yxr3bdfd55a6kd84z9p475vcx";
     modules = [
         {
           nonReinstallablePkgs =
@@ -28,7 +28,10 @@ let
               "unix" "xhtml"
               "stm" "terminfo"
             ];
+          # See https://github.com/input-output-hk/plutus/issues/1213
           packages.marlowe.doHaddock = false;
+          packages.plutus-use-cases.doHaddock = false;
+          packages.plutus-scb.doHaddock = false;
           # HACK to get z3 on the path for these tests
           packages.marlowe-hspec.components.tests.marlowe-hspec-test.preCheck = ''
             PATH=${lib.makeBinPath [ pkgs.z3 ]}:$PATH
