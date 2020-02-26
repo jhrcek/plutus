@@ -7,6 +7,7 @@ let
       libs = packageSet.localLib.collectComponents' "library" packageSet.local-packages-new;
       tests = packageSet.localLib.collectComponents' "tests" packageSet.local-packages-new;
       benchmarks = packageSet.localLib.collectComponents' "benchmarks" packageSet.local-packages-new;
+      dev = pkgs.recurseIntoAttrs packageSet.dev.packages;
     };
   linux = ["x86_64-linux"];
   darwin = ["x86_64-darwin"];
