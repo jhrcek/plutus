@@ -13,7 +13,7 @@ let
     src = ../.;
     # This turns the output into a fixed-output derivation, which speeds things
     # up, but means we need to invalidate this hash when we change things.
-    #stack-sha256 = "0356fsjnb5lgzn7xw2wqphy97c2yxr3bdfd55a6kd84z9p475vcx";
+    stack-sha256 = "0zicbcm21rlr7ql3y4v66w88f3hl78q2g3bjdcpd3r0klwb7hdgr";
     modules = [
         {
           nonReinstallablePkgs =
