@@ -285,15 +285,15 @@ let
         name = "plutus-development";
         contents =
           let runtimeGhc =
-                haskellPackages.ghcWithPackages (ps: [
-                  haskellPackages.language-plutus-core
-                  haskellPackages.plutus-emulator
-                  haskellPackages.plutus-wallet-api
-                  haskellPackages.plutus-tx
-                  haskellPackages.plutus-tx-plugin
-                  haskellPackages.plutus-use-cases
-                  haskellPackages.plutus-ir
-                  haskellPackages.plutus-contract
+                haskell-packages-new.ghcWithPackages (ps: [
+                  ps.language-plutus-core
+                  ps.plutus-emulator
+                  ps.plutus-wallet-api
+                  ps.plutus-tx
+                  ps.plutus-tx-plugin
+                  ps.plutus-use-cases
+                  ps.plutus-ir
+                  ps.plutus-contract
                 ]);
           in  [
                 runtimeGhc
@@ -301,7 +301,7 @@ let
                 pkgs.coreutils
                 pkgs.bash
                 pkgs.git # needed by cabal-install
-                haskellPackages.cabal-install
+                dev.packages.cabal-install
               ];
         config = {
           Cmd = ["bash"];
