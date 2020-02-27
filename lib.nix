@@ -22,9 +22,9 @@ let
 
   # Haskell.nix versions of these are broken in some cases, see https://github.com/input-output-hk/haskell.nix/issues/457
   collectComponents = group: packageSel: haskellPackages:
-    (lib.mapAttrs (_: package: (package.components.${group} or {}) // { recurseForDerivations = true; })
-     (lib.filterAttrs (name: package: (package.isHaskell or false) && packageSel package) haskellPackages))
-    // { recurseForDerivations = true; };
+    let packageToComponents = package: let components = package.components.${group} or {}; in if lib.isDerivation components then components else pkgs.recurseIntoAttrs components;
+        packageFilter = package: (package.isHaskell or false) && packageSel package;
+    in pkgs.recurseIntoAttrs (lib.mapAttrs (_: packageToComponents) (lib.filterAttrs (_: packageFilter) haskellPackages));
   collectComponents' = group: collectComponents group (_: true);
 
   # List of all public (i.e. published Haddock, will go on Hackage) Plutus pkgs
