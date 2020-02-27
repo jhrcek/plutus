@@ -47,6 +47,7 @@ let
       # Replace each node in the tree with the provided list of systems
       # or an empty list if the node is not a derivation.
       (_: x: lib.optionals (lib.isDerivation x) sys);
+  # Hydra doesn't like these attributes hanging around in "jobsets": it thinks they're jobs!
   stripRecurseForDerivations = lib.filterAttrsRecursive (n: _: n == "recurseForDerivations");
 
   # This is a mapping from attribute paths to systems. So it needs to mirror the structure of the
@@ -59,7 +60,6 @@ let
       # the tests will depend on the main package so that's okay.
       lib.mapAttrs (n: p: if p ? testdata then { testrun = supportedSystems; } else supportedSystems)
          packageSet.localPackages;
-    local-packages-new = mapDerivationsToSystemsRecursive supportedSystems packageSet.local-packages-new;
     # Some of the Agda dependencies only build on linux
     metatheory = lib.mapAttrs (_: _: linux) packageSet.metatheory;
     # At least the client is broken on darwin for some yarn reason
@@ -78,7 +78,11 @@ let
     dev.scripts = lib.mapAttrs (n: _: if n == "updateClientDeps" then linux else supportedSystems) packageSet.dev.scripts;
   };
 
-  testJobsets = mapTestOn systemMapping // (stripRecurseForDerivations ci);
+  testJobsets =
+    mapTestOn systemMapping
+    # ci.nix is a set of attributes that work fine as jobs (albeit in a slightly different structure, the platform comes
+    # first), but we mainly just need to get rid of the 'recurseForDerivation' attributes.
+    // (stripRecurseForDerivations ci);
 
   # Recursively collect all jobs (derivations) in a jobset
   allJobs = jobset: lib.collect lib.isDerivation jobset;
@@ -88,8 +92,6 @@ in lib.fix (jobsets: testJobsets // {
     name = "plutus-required-checks";
 
     constituents = (allJobs jobsets.localPackages)
-      # Let's not make the local-packages-new required for now
-      # ++ (allJobs jobsets.local-packages-new)
       ++ (allJobs jobsets.metatheory)
       ++ (allJobs jobsets.tests)
       ++ (allJobs jobsets.docs)
