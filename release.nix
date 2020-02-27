@@ -34,9 +34,17 @@ in with (import (fixedNixpkgs + "/pkgs/top-level/release-lib.nix") {
 
 let
   packageSet = import ./. { inherit rev; };
-  mapDerivationSystems = sys:
+  # Makes a tree of attributes where some nodes are replaced with just the
+  # list of systems which we want to the hydra jobs to run on.
+  mapDerivationsToSystemsRecursive = sys:
     lib.mapAttrsRecursiveCond
+      # Only recurse into attributes marked with `recurseForDerivations`.
+      # This avoids us looking to deeply (or even recusing infinitely)
+      # This mark is usually added with `pkgs.recurseIntoAttrs`
+      # https://github.com/NixOS/nixpkgs/blob/fd98b29b293f868636fa2f6cf54d7df334bdd3d9/pkgs/top-level/all-packages.nix#L65-L67 
       (x: x.recurseForDerivations or false)
+      # Replace each node in the tree with the provided list of systems
+      # or an empty list if the node is not a derivation.
       (_: x: lib.optionals (lib.isDerivation x) sys);
 
   # This is a mapping from attribute paths to systems. So it needs to mirror the structure of the
@@ -49,7 +57,7 @@ let
       # the tests will depend on the main package so that's okay.
       lib.mapAttrs (n: p: if p ? testdata then { testrun = supportedSystems; } else supportedSystems)
          packageSet.localPackages;
-    local-packages-new = mapDerivationSystems supportedSystems packageSet.local-packages-new;
+    local-packages-new = mapDerivationsToSystemsRecursive supportedSystems packageSet.local-packages-new;
     # Some of the Agda dependencies only build on linux
     metatheory = lib.mapAttrs (_: _: linux) packageSet.metatheory;
     # At least the client is broken on darwin for some yarn reason
@@ -63,7 +71,7 @@ let
     papers = lib.mapAttrs (_: _: linux) packageSet.papers;
     tests = lib.mapAttrs (_: _: supportedSystems) packageSet.tests;
     dev.packages = lib.mapAttrs (_: _: supportedSystems) packageSet.dev.packages;
-    dev.haskellNixRoots = mapDerivationSystems supportedSystems packageSet.dev.haskellNixRoots;
+    dev.haskellNixRoots = mapDerivationsToSystemsRecursive supportedSystems packageSet.dev.haskellNixRoots;
     # See note on 'easyPS' in 'default.nix'
     dev.scripts = lib.mapAttrs (n: _: if n == "updateClientDeps" then linux else supportedSystems) packageSet.dev.scripts;
   };
