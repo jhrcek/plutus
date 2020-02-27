@@ -25,6 +25,7 @@ in
 
 # The revision passed in by Hydra, if there is one
 let rev = if builtins.isNull plutus then null else plutus.rev;
+    ci = import ./ci.nix;
 
 in with (import (fixedNixpkgs + "/pkgs/top-level/release-lib.nix") {
   inherit supportedSystems scrubJobs;
@@ -41,7 +42,7 @@ let
       # Only recurse into attributes marked with `recurseForDerivations`.
       # This avoids us looking to deeply (or even recusing infinitely)
       # This mark is usually added with `pkgs.recurseIntoAttrs`
-      # https://github.com/NixOS/nixpkgs/blob/fd98b29b293f868636fa2f6cf54d7df334bdd3d9/pkgs/top-level/all-packages.nix#L65-L67 
+      # https://github.com/NixOS/nixpkgs/blob/fd98b29b293f868636fa2f6cf54d7df334bdd3d9/pkgs/top-level/all-packages.nix#L65-L67
       (x: x.recurseForDerivations or false)
       # Replace each node in the tree with the provided list of systems
       # or an empty list if the node is not a derivation.
@@ -76,7 +77,7 @@ let
     dev.scripts = lib.mapAttrs (n: _: if n == "updateClientDeps" then linux else supportedSystems) packageSet.dev.scripts;
   };
 
-  testJobsets = mapTestOn systemMapping;
+  testJobsets = mapTestOn systemMapping // ci;
 
   # Recursively collect all jobs (derivations) in a jobset
   allJobs = jobset: lib.collect lib.isDerivation jobset;
