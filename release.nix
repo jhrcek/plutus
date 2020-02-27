@@ -48,7 +48,7 @@ let
       # or an empty list if the node is not a derivation.
       (_: x: lib.optionals (lib.isDerivation x) sys);
   # Hydra doesn't like these attributes hanging around in "jobsets": it thinks they're jobs!
-  stripRecurseForDerivations = lib.filterAttrsRecursive (n: _: n == "recurseForDerivations");
+  stripRecurseForDerivations = lib.filterAttrsRecursive (n: _: n != "recurseForDerivations");
 
   # This is a mapping from attribute paths to systems. So it needs to mirror the structure of the
   # attributes in default.nix exactly
