@@ -34,6 +34,10 @@ in with (import (fixedNixpkgs + "/pkgs/top-level/release-lib.nix") {
 
 let
   packageSet = import ./. { inherit rev; };
+  mapDerivationSystems = sys:
+    lib.mapAttrsRecursiveCond
+      (x: x.recurseForDerivations or false)
+      (_: x: lib.optionals (lib.isDerivation x) sys);
 
   # This is a mapping from attribute paths to systems. So it needs to mirror the structure of the
   # attributes in default.nix exactly
@@ -45,8 +49,7 @@ let
       # the tests will depend on the main package so that's okay.
       lib.mapAttrs (n: p: if p ? testdata then { testrun = supportedSystems; } else supportedSystems)
          packageSet.localPackages;
-    # TODO: make this work on hydra.
-    #local-packages-new = lib.mapAttrs (_: _: supportedSystems) packageSet.local-packages-new;
+    local-packages-new = mapDerivationSystems supportedSystems packageSet.local-packages-new;
     # Some of the Agda dependencies only build on linux
     metatheory = lib.mapAttrs (_: _: linux) packageSet.metatheory;
     # At least the client is broken on darwin for some yarn reason
@@ -60,8 +63,7 @@ let
     papers = lib.mapAttrs (_: _: linux) packageSet.papers;
     tests = lib.mapAttrs (_: _: supportedSystems) packageSet.tests;
     dev.packages = lib.mapAttrs (_: _: supportedSystems) packageSet.dev.packages;
-    # TODO: make this work on hydra
-    #dev.haskellNixRoots = lib.mapAttrsRecursive (_: _: supportedSystems) packageSet.dev.haskellNixRoots;
+    dev.haskellNixRoots = mapDerivationSystems supportedSystems packageSet.dev.haskellNixRoots;
     # See note on 'easyPS' in 'default.nix'
     dev.scripts = lib.mapAttrs (n: _: if n == "updateClientDeps" then linux else supportedSystems) packageSet.dev.scripts;
   };
