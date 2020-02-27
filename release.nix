@@ -47,6 +47,7 @@ let
       # Replace each node in the tree with the provided list of systems
       # or an empty list if the node is not a derivation.
       (_: x: lib.optionals (lib.isDerivation x) sys);
+  stripRecurseForDerivations = lib.filterAttrsRecursive (n: _: n == "recurseForDerivations");
 
   # This is a mapping from attribute paths to systems. So it needs to mirror the structure of the
   # attributes in default.nix exactly
@@ -77,7 +78,7 @@ let
     dev.scripts = lib.mapAttrs (n: _: if n == "updateClientDeps" then linux else supportedSystems) packageSet.dev.scripts;
   };
 
-  testJobsets = mapTestOn systemMapping // ci;
+  testJobsets = mapTestOn systemMapping // (stripRecurseForDerivations ci);
 
   # Recursively collect all jobs (derivations) in a jobset
   allJobs = jobset: lib.collect lib.isDerivation jobset;
