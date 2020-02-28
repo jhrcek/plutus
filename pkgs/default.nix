@@ -21,6 +21,7 @@ filepath = null;
 ghc-boot = null;
 ghc-boot-th = null;
 ghc-prim = null;
+ghc-heap = null;
 ghci = null;
 hoopl = null;
 hpc = null;
@@ -13153,6 +13154,39 @@ description = "Use GHC call-stacks in a backward compatible way";
 license = stdenv.lib.licenses.mit;
 
 }) {};
+"canonical-json" = callPackage
+({
+  mkDerivation
+, base
+, bytestring
+, containers
+, deepseq
+, parsec
+, pretty
+, stdenv
+}:
+mkDerivation {
+
+pname = "canonical-json";
+version = "0.6.0.0";
+sha256 = "ff0b80171c85e554d9985cbb828d8f77efbc48985bd59dcd4bc4ceb7e1216851";
+revision = "1";
+editedCabalFile = "18i3msxza5phvv5mz7gjqcygrm8rxd86pk2vqnsa715qrhsz88ch";
+libraryHaskellDepends = [
+base
+bytestring
+containers
+deepseq
+parsec
+pretty
+];
+doHaddock = false;
+doCheck = false;
+homepage = "https://github.com/well-typed/canonical-json";
+description = "Canonical JSON for signing and hashing JSON values";
+license = stdenv.lib.licenses.bsd3;
+
+}) {};
 "cardano-crypto" = callPackage
 ({
   mkDerivation
@@ -13199,6 +13233,78 @@ doHaddock = false;
 doCheck = false;
 homepage = "https://github.com/input-output-hk/cardano-crypto#readme";
 description = "Cryptography primitives for cardano";
+license = stdenv.lib.licenses.mit;
+
+}) {};
+"cardano-prelude" = callPackage
+({
+  mkDerivation
+, aeson
+, array
+, base
+, base16-bytestring
+, bytestring
+, canonical-json
+, cborg
+, containers
+, fetchgit
+, fingertree
+, formatting
+, generic-deriving
+, ghc-heap
+, ghc-prim
+, hashable
+, integer-gmp
+, mtl
+, nonempty-containers
+, protolude
+, serialise
+, stdenv
+, tagged
+, text
+, time
+, vector
+}:
+mkDerivation {
+
+pname = "cardano-prelude";
+version = "0.1.0.0";
+src = fetchgit {
+
+url = "https://github.com/input-output-hk/cardano-prelude.git";
+sha256 = "1q2pz7qx9l4frnifilv0jqz8i4y3q0jwlip4m22z0ldiz5iasmln";
+rev = "57fcc83702b91e0a7aecdb32c99ab1d8c1c444d0";
+fetchSubmodules = true;
+
+};
+libraryHaskellDepends = [
+aeson
+array
+base
+base16-bytestring
+bytestring
+canonical-json
+cborg
+containers
+fingertree
+formatting
+generic-deriving
+ghc-heap
+ghc-prim
+hashable
+integer-gmp
+mtl
+nonempty-containers
+protolude
+serialise
+tagged
+text
+time
+vector
+];
+doHaddock = false;
+doCheck = false;
+description = "A Prelude replacement for the Cardano project";
 license = stdenv.lib.licenses.mit;
 
 }) {};
@@ -41883,6 +41989,7 @@ license = stdenv.lib.licenses.bsd3;
 , bimap
 , bytestring
 , cardano-crypto
+, cardano-prelude
 , cborg
 , composition-prelude
 , containers
@@ -41891,10 +41998,12 @@ license = stdenv.lib.licenses.bsd3;
 , deepseq
 , dependent-map
 , dependent-sum
+, directory
 , filepath
 , happy
 , hashable
 , hedgehog
+, integer-gmp
 , lens
 , memory
 , mmorph
@@ -41956,7 +42065,6 @@ template-haskell
 text
 th-lift-instances
 transformers
-tuple
 ];
 libraryToolDepends = [
 alex
@@ -41973,6 +42081,7 @@ bytestring
 containers
 filepath
 hedgehog
+lens
 mmorph
 mtl
 prettyprinter
@@ -41988,8 +42097,13 @@ tuple
 benchmarkHaskellDepends = [
 base
 bytestring
+cardano-prelude
 containers
 criterion
+deepseq
+directory
+integer-gmp
+lens
 serialise
 weigh
 ];
@@ -55075,6 +55189,7 @@ license = stdenv.lib.licenses.asl20;
 , containers
 , doctest
 , language-plutus-core
+, lens
 , mtl
 , plutus-ir
 , prettyprinter
@@ -55095,6 +55210,7 @@ bytestring
 cborg
 containers
 language-plutus-core
+lens
 mtl
 plutus-ir
 prettyprinter
@@ -55164,6 +55280,7 @@ bytestring
 hedgehog
 integer-gmp
 language-plutus-core
+lens
 mtl
 plutus-ir
 plutus-tx
@@ -62947,20 +63064,20 @@ license = stdenv.lib.licenses.bsd3;
 , integer-gmp
 , stdenv
 , unordered-containers
-, vector
 }:
 mkDerivation {
 
 pname = "semirings";
-version = "0.2.1.1";
-sha256 = "576a5b09e8b0045e13fab04f5a53eaead69c5b0bca99e3cdfff88be90cc64868";
+version = "0.4.2";
+sha256 = "b2748b4309b780e5a4473a31ad69bed2f04ddc5d03ef099501bb260d535ccc2d";
+revision = "1";
+editedCabalFile = "1wrkcfblq3j2688xg8f1ial05sijkssmdm2rv9sw6jfxiays60vq";
 libraryHaskellDepends = [
 base
 containers
 hashable
 integer-gmp
 unordered-containers
-vector
 ];
 doHaddock = false;
 doCheck = false;
