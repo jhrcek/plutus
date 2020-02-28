@@ -69,4 +69,5 @@ self: super: {
     stm = null;
     text = null;
     xhtml = null;
+    ghc-heap = null;
   }
