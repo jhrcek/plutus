@@ -261,3 +261,25 @@ benchmark language-plutus-core-weigh
         language-plutus-core -any,
         serialise -any,
         weigh -any
+
+
+benchmark language-plutus-core-budgeting-bench
+    type: exitcode-stdio-1.0
+    main-is: Bench.hs
+    hs-source-dirs: budgeting-bench
+    default-language: Haskell2010
+    ghc-options: -Wall -Wincomplete-uni-patterns
+                 -Wincomplete-record-updates -Wredundant-constraints -Widentities
+                 -rtsopts
+    build-depends:
+        base -any,
+        bytestring -any,
+        containers -any,
+        criterion -any,
+        language-plutus-core -any,
+        serialise -any,
+        deepseq -any,
+        lens -any,
+        cardano-prelude -any,
+        directory -any,
+        integer-gmp -any

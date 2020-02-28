@@ -88,6 +88,11 @@ extra-deps:
   commit: cc27b9de4d5d0939235fa9a8b418de3ea4807bab
 - git: https://gitlab.com/joneshf/purty.git
   commit: 3c073e1149ecdddd01f1d371c70d5b243d743bf2
+
+# for cardano-prelude
+- git: https://github.com/input-output-hk/cardano-prelude.git
+  commit: 57fcc83702b91e0a7aecdb32c99ab1d8c1c444d0
+- canonical-json-0.6.0.0
 extra-package-dbs: []
 nix:
   packages: [zlib, gmp, openssl]
