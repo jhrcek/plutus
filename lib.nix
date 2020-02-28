@@ -22,13 +22,18 @@ let
 
   # Haskell.nix versions of these are broken in some cases, see https://github.com/input-output-hk/haskell.nix/issues/457
   collectComponents = group: packageSel: haskellPackages:
-    let packageToComponents = package:
+    let packageToComponents = name: package:
+          # look for the components with this group if there are any
           let components = package.components.${group} or {};
+          # set recurseForDerivations unless it's a derivation itself (e.g. the "library" component) or an empty set
           in if lib.isDerivation components || components == {}
              then components
              else pkgs.recurseIntoAttrs components;
-        packageFilter = package: (package.isHaskell or false) && packageSel package;
-    in pkgs.recurseIntoAttrs (lib.filterAttrs (_: components: components != {}) (lib.mapAttrs (_: packageToComponents) (lib.filterAttrs (_: packageFilter) haskellPackages)));
+        packageFilter = name: package: (package.isHaskell or false) && packageSel package;
+        filteredPkgs = lib.filterAttrs packageFilter haskellPackages;
+        # at this point we can filter out packages that don't have any of the given kind of component
+        packagesByComponent = lib.filterAttrs (_: components: components != {}) (lib.mapAttrs packageToComponents filteredPkgs);
+    in pkgs.recurseIntoAttrs packagesByComponent;
   collectComponents' = group: collectComponents group (_: true);
 
   # List of all public (i.e. published Haddock, will go on Hackage) Plutus pkgs
