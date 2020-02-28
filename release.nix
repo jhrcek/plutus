@@ -6,7 +6,7 @@ let
   linux = ["x86_64-linux"];
   darwin = ["x86_64-darwin"];
 in
-  { supportedSystems ? linux #++ darwin
+  { supportedSystems ? linux ++ darwin
   , scrubJobs ? true
   , fasterBuild ? false
   , skipPackages ? []
