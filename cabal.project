@@ -65,3 +65,8 @@ source-repository-package
   type: git
   location: https://github.com/shmish111/github.git
   tag: cc27b9de4d5d0939235fa9a8b418de3ea4807bab
+
+source-repository-package
+  type: git
+  location: https://github.com/input-output-hk/cardano-prelude.git
+  tag: 57fcc83702b91e0a7aecdb32c99ab1d8c1c444d0
