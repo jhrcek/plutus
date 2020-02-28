@@ -121,7 +121,16 @@ let
     };
 
     ## FIXME: currently only an approximation of the existing infra
-    haskell-packages-new = pkgs.plutusHaskellPackages;
+    haskell-packages-new = import ./nix/haskell.nix {
+      inherit (pkgs)
+        lib
+        stdenv
+        pkgs
+        haskell-nix
+        buildPackages
+        ;
+      inherit metatheory;
+    };
 
     local-packages-new = pkgs.haskell-nix.haskellLib.selectProjectPackages haskell-packages-new;
 
@@ -340,7 +349,7 @@ let
     metatheory = import ./metatheory {
       inherit (agdaPackages) agda AgdaStdlib;
       inherit (pkgs.haskell-nix) cleanSourceHaskell;
-      inherit pkgs haskellPackages;
+      inherit (pkgs) lib;
     };
 
     dev = rec {

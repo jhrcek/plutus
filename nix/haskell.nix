@@ -6,6 +6,7 @@
 , pkgs
 , haskell-nix
 , buildPackages
+, metatheory
 }:
 
 let
@@ -13,7 +14,7 @@ let
     src = ../.;
     # This turns the output into a fixed-output derivation, which speeds things
     # up, but means we need to invalidate this hash when we change things.
-    stack-sha256 = "0zicbcm21rlr7ql3y4v66w88f3hl78q2g3bjdcpd3r0klwb7hdgr";
+    stack-sha256 = "0k603r1x8waq8a22ph92vpchkisf6n8q1nbmpg6vm8j2dqf8lp1s";
     modules = [
         {
           nonReinstallablePkgs =
@@ -36,6 +37,8 @@ let
           packages.marlowe-hspec.components.tests.marlowe-hspec-test.preCheck = ''
             PATH=${lib.makeBinPath [ pkgs.z3 ]}:$PATH
           '';
+          # plc-agda is compiled from the Haskell source files generated from the Agda
+          packages.plc-agda.src = "${metatheory.plutus-metatheory-compiled}/share/agda";
         }
      ];
     pkg-def-extras = [

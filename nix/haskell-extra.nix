@@ -6,9 +6,21 @@
 ############################################################################
 { pkgs }:
 {
-  cabal-install = pkgs.haskell-nix.hackage-package { name = "cabal-install"; version = "2.4.1.0"; };
-  stylish-haskell = pkgs.haskell-nix.hackage-package { name = "stylish-haskell"; version = "0.9.2.2"; };
-  hlint = pkgs.haskell-nix.hackage-package { name = "hlint"; version = "2.1.12"; };
+  cabal-install = pkgs.haskell-nix.hackage-package {
+    name = "cabal-install";
+    version = "2.4.1.0";
+    index-state = "2020-02-20T00:00:00Z";
+  };
+  stylish-haskell = pkgs.haskell-nix.hackage-package {
+    name = "stylish-haskell";
+    version = "0.9.2.2";
+    index-state = "2020-02-20T00:00:00Z";
+  };
+  hlint = pkgs.haskell-nix.hackage-package {
+    name = "hlint";
+    version = "2.1.12";
+    index-state = "2020-02-20T00:00:00Z";
+  };
   purty =
     let hspkgs = pkgs.haskell-nix.stackProject {
         src = pkgs.fetchFromGitLab {

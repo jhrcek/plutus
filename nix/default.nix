@@ -34,8 +34,6 @@ let
           # also expose our sources and overlays
           // { inherit overlays sources; };
       })
-      # And, of course, our haskell-nix-ified cabal project:
-      (import ./pkgs.nix)
       (import ./overlays/musl.nix)
       (import ./overlays/nixpkgs-overrides.nix)
     ];

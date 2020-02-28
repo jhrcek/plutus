@@ -23,6 +23,7 @@ packages:
 - deployment-server
 - iots-export
 - marlowe-symbolic
+- metatheory
 
 extra-deps:
 # Agda and deps
