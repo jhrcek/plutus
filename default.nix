@@ -136,7 +136,7 @@ let
 
     # Extra Haskell packages which we use but aren't part of the main project
     # definition.
-    extraHaskellPackages = pkgs.callPackage ./nix/haskell-extra.nix {};
+    extraHaskellPackages = pkgs.callPackage ./nix/haskell-extra.nix { inherit (localLib) index-state; };
 
     tests = {
       shellcheck = pkgs.callPackage localLib.iohkNix.tests.shellcheck { inherit src; };

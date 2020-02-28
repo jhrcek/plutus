@@ -70,7 +70,9 @@ let
 
   isPlutus = name: builtins.elem name plutusPkgList;
 
-  regeneratePackages = legacyIohkNix.stack2nix.regeneratePackages { hackageSnapshot = "2020-01-13T00:00:00Z"; };
+  # The Hackage index-state we use for things
+  index-state = "2020-02-20T00:00:00Z";
+  regeneratePackages = legacyIohkNix.stack2nix.regeneratePackages { hackageSnapshot = index-state; };
 
   unfreePredicate = pkg:
       let unfreePkgs = [ "kindlegen" ]; in
@@ -92,6 +94,7 @@ in lib // {
   isPublicPlutus
   plutusPublicPkgList
   plutusPkgList
+  index-state
   regeneratePackages
   unfreePredicate
   nixpkgs
