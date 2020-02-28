@@ -9,6 +9,12 @@ let
       benchmarks = packageSet.localLib.collectComponents' "benchmarks" packageSet.local-packages-new;
       exes = packageSet.localLib.collectComponents' "exes" packageSet.local-packages-new;
       dev = pkgs.recurseIntoAttrs packageSet.dev.packages;
+      # Need to list this manually to work around https://github.com/input-output-hk/haskell.nix/issues/464
+      plc-agda = pkgs.recurseIntoAttrs {
+        plc-agda = packageSet.haskell-packages-new.plc-agda.exes.plc-agda;
+        test-plc-agda = packageSet.haskell-packages-new.plc-agda.tests.test-plc-agda;
+        test2-plc-agda = packageSet.haskell-packages-new.plc-agda.tests.test2-plc-agda;
+      };
     };
   linux = ["x86_64-linux"];
   darwin = ["x86_64-darwin"];
