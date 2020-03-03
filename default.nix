@@ -469,7 +469,6 @@ let
                                 pkgs.z3
                                 pkgs.sqlite-analyzer
                                 pkgs.sqlite-interactive
-
                                 easyPS.purs
                                 easyPS.spago
                                 easyPS.purty
