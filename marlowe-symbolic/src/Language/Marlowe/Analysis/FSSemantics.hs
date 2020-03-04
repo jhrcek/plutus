@@ -193,11 +193,8 @@ isValidAndFailsAux hasErr Close sState =
                                               :traces sState) (paramTrace sState))
 isValidAndFailsAux hasErr (Pay accId payee token val cont) sState =
   do let concVal = symEvalVal val sState
-     let potentialFailedPayTrace =
-          convertToSymbolicTrace ((lowSlot sState, highSlot sState, Nothing, 0)
-                                  :traces sState) (paramTrace sState)
      let originalMoney = M.findWithDefault 0 (accId, token) (symAccounts sState)
-     let remainingMoneyInAccount = originalMoney - concVal
+     let remainingMoneyInAccount = originalMoney - smax (literal 0) concVal
      let newAccs = M.insert (accId, token) (smax (literal 0) remainingMoneyInAccount)
                                                  (symAccounts sState)
      let finalSState = sState { symAccounts =
