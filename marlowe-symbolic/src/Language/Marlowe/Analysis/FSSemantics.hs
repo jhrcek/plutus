@@ -200,7 +200,7 @@ isValidAndFailsAux hasErr (Pay accId payee token val cont) sState =
      let finalSState = sState { symAccounts =
            case payee of
              (Account destAccId) ->
-                M.insert (accId, token)
+                M.insert (destAccId, token)
                          (smin originalMoney (smax (literal 0) concVal)
                             + M.findWithDefault 0 (destAccId, token) newAccs)
                          newAccs
