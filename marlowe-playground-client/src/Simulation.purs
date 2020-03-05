@@ -36,7 +36,7 @@ import Network.RemoteData (RemoteData(..), isLoading)
 import Prelude (class Show, bind, compare, const, flip, identity, mempty, not, pure, show, unit, zero, ($), (+), (<$>), (<<<), (<>), (>))
 import StaticData as StaticData
 import Text.Parsing.StringParser (runParser)
-import Types (ActionInput(..), ActionInputId, ChildSlots, FrontendState, HAction(..), MarloweError(..), MarloweState, _Head, _analysisState, _contract, _editorErrors, _holes, _marloweCompileResult, _marloweState, _monacoSlot, _payments, _pendingInputs, _possibleActions, _selectedHole, _slot, _state, _transactionError, _transactionWarnings)
+import Types (ActionInput(..), ActionInputId, ChildSlots, FrontendState, HAction(..), MarloweError(..), MarloweState, _Head, _analysisState, _contract, _editorErrors, _holes, _marloweCompileResult, _marloweEditorSlot, _marloweState, _payments, _pendingInputs, _possibleActions, _selectedHole, _slot, _state, _transactionError, _transactionWarnings)
 
 paneHeader :: forall p. String -> HTML p HAction
 paneHeader s = h2 [ class_ $ ClassName "pane-header" ] [ text s ]
@@ -81,7 +81,7 @@ simulationPane state =
               , onDrop $ Just <<< MarloweHandleDropEvent
               ]
               [ row_
-                  [ div [ class_ col9 ] [ slot _monacoSlot unit monacoComponent unit (Just <<< MarloweHandleEditorMessage) ]
+                  [ div [ class_ col9 ] [ slot _marloweEditorSlot unit monacoComponent unit (Just <<< MarloweHandleEditorMessage) ]
                   , holesPane (view _selectedHole state) (view (_marloweState <<< _Head <<< _holes) $ state)
                   ]
               ]
