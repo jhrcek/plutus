@@ -33,6 +33,7 @@ import Editor (compileButton, editorView, editorFeedback)
 import Effect (Effect)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect, liftEffect)
+import Effect.Class.Console as Console
 import Foreign.Class (decode)
 import Foreign.JSON (parseJSON)
 import Gist (_GistId, gistFileContent, gistId)
@@ -44,6 +45,7 @@ import Halogen.HTML (ClassName(ClassName), HTML, a, button, code_, div, div_, h1
 import Halogen.HTML.Events (onClick)
 import Halogen.HTML.Extra (mapComponent)
 import Halogen.HTML.Properties (class_, classes, disabled, href)
+import Halogen.Monaco as Monaco
 import Halogen.Query (HalogenM)
 import Language.Haskell.Interpreter (SourceCode(SourceCode), InterpreterError(CompilationErrors, TimeoutError), CompilationError(CompilationError, RawError), InterpreterResult(InterpreterResult), _InterpreterResult)
 import Marlowe (SPParams_)
@@ -246,6 +248,11 @@ handleAction (MarloweHandleEditorMessage (TextChanged text)) = do
   assign _selectedHole Nothing
   saveMarloweBuffer text
   updateContractInState text
+
+handleAction (MarloweHandleMonacoEditorMessage (Monaco.TextChanged contents)) = do
+  assign _selectedHole Nothing
+  saveMarloweBuffer contents
+  updateContractInState contents
 
 handleAction (MarloweHandleMonacoEditorMessage _) = pure unit
 
